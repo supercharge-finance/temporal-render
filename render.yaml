@@ -51,60 +51,6 @@ services:
   - key: discovery.type
     value: single-node
 - type: pserv
-  autoDeploy: false
-  name: temporal-worker
-  plan: Starter
-  region: oregon
-  env: docker
-  dockerfilePath: ./temporal-cluster/server/Dockerfile
-  scaling:
-    minInstances: 1
-    maxInstances: 3
-    targetMemoryPercent: 80
-    targetCPUPercent: 80
-  envVars:
-  - fromGroup: temporal-shared
-  # The worker service needs to wait for the history service to be up first,
-  # otherwise it will fail with "error starting scanner".
-  - key: DEPENDS_ON_HISTORY
-    fromService:
-      name: temporal-history
-      type: pserv
-      property: host
-  - key: SERVICES
-    value: worker
-  - key: TEMPORAL_FRONTEND_HOST
-    fromService:
-      name: temporal-frontend
-      type: pserv
-      property: host
-  - key: ES_SEEDS
-    fromService:
-      name: temporal-elasticsearch
-      type: pserv
-      property: host
-  - key: ES_PWD
-    fromService:
-      name: temporal-elasticsearch
-      type: pserv
-      envVarKey: ELASTIC_PASSWORD
-  - key: DBNAME
-    fromDatabase:
-      name: temporal-db
-      property: database
-  - key: POSTGRES_USER
-    fromDatabase:
-      name: temporal-db
-      property: user
-  - key: POSTGRES_PWD
-    fromDatabase:
-      name: temporal-db
-      property: password
-  - key: POSTGRES_SEEDS
-    fromDatabase:
-      name: temporal-db
-      property: host
-- type: pserv
   name: temporal-frontend
   autoDeploy: false
   plan: Starter
@@ -217,6 +163,60 @@ services:
   - fromGroup: temporal-shared
   - key: SERVICES
     value: matching
+  - key: TEMPORAL_FRONTEND_HOST
+    fromService:
+      name: temporal-frontend
+      type: pserv
+      property: host
+  - key: ES_SEEDS
+    fromService:
+      name: temporal-elasticsearch
+      type: pserv
+      property: host
+  - key: ES_PWD
+    fromService:
+      name: temporal-elasticsearch
+      type: pserv
+      envVarKey: ELASTIC_PASSWORD
+  - key: DBNAME
+    fromDatabase:
+      name: temporal-db
+      property: database
+  - key: POSTGRES_USER
+    fromDatabase:
+      name: temporal-db
+      property: user
+  - key: POSTGRES_PWD
+    fromDatabase:
+      name: temporal-db
+      property: password
+  - key: POSTGRES_SEEDS
+    fromDatabase:
+      name: temporal-db
+      property: host
+- type: pserv
+  autoDeploy: false
+  name: temporal-worker
+  plan: Starter
+  region: oregon
+  env: docker
+  dockerfilePath: ./temporal-cluster/server/Dockerfile
+  scaling:
+    minInstances: 1
+    maxInstances: 3
+    targetMemoryPercent: 80
+    targetCPUPercent: 80
+  envVars:
+  - fromGroup: temporal-shared
+  # The worker service needs to wait for the history service to be up first,
+  # otherwise it will fail with "error starting scanner".
+  - key: DEPENDS_ON_HISTORY
+    fromService:
+      name: temporal-history
+      type: pserv
+      property: host
+  - key: SERVICES
+    value: worker
   - key: TEMPORAL_FRONTEND_HOST
     fromService:
       name: temporal-frontend

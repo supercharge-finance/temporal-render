@@ -248,7 +248,7 @@ services:
     fromDatabase:
       name: temporal-db
       property: host
-- type: pserv
+- type: web
   name: temporal-ui
   autoDeploy: false
   plan: Starter
